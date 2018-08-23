@@ -168,11 +168,15 @@ config EXYNOS_PD
 		depends on PM
 		select PM_GENERIC_DOMAINS
 
+<<<<<<< HEAD
 config EXYNOS_SECURE_LOG
 	bool "Exynos Secure Log"
 	default y
 	help
 	  Support Exynos Secure Log
+
+config STATE_NOTIFIER
+    	bool "State Notifier"
 
 config EXYNOS_KERNEL_PROTECTION
 	bool "Exynos Kernel Code Protection"
