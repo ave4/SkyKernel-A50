@@ -140,7 +140,9 @@ ontime_select_fit_cpus(struct task_struct *p, struct cpumask *fit_cpus)
 
 	cpumask_clear(fit_cpus);
 
-	if (ontime_load_avg(p) >= curr->upper_boundary) {
+	if (ontime_load_avg(p) >= curr->upper_boundary ||
+	    (schedtune_task_boost(p) > 0 &&
+	     cpumask_test_cpu(src_cpu, cpu_coregroup_mask(MIN_CAPACITY_CPU)))) {
 		/*
 		 * If task's load is above upper boundary of source,
 		 * find fit_cpus that have higher mips than source.
