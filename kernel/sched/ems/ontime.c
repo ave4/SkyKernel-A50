@@ -292,7 +292,9 @@ ontime_pick_heavy_task(struct sched_entity *se, int *boost_migration)
 		return p;
 	}
 	if (schedtune_ontime_en(p)) {
-		if (ontime_load_avg(p) >= get_upper_boundary(task_cpu(p))) {
+		if (ontime_load_avg(p) >= get_upper_boundary(task_cpu(p)) ||
+		    (schedtune_task_boost(p) > 0 &&
+		     cpumask_test_cpu(task_cpu(p), cpu_coregroup_mask(MIN_CAPACITY_CPU)))) {
 			heaviest_task = p;
 			max_util_avg = ontime_load_avg(p);
 			*boost_migration = 0;
@@ -622,6 +624,11 @@ int ontime_task_wakeup(struct task_struct *p, int sync)
 	return -1;
 }
 
+static inline bool smaller_cpu_capacity(int cpu, int ref)
+{
+	return capacity_orig_of(cpu) < capacity_orig_of(ref);
+}
+
 int ontime_can_migration(struct task_struct *p, int dst_cpu)
 {
 	int src_cpu = task_cpu(p);
@@ -633,6 +640,13 @@ int ontime_can_migration(struct task_struct *p, int dst_cpu)
 		trace_ems_ontime_check_migrate(p, dst_cpu, false, "on migrating");
 		return false;
 	}
+
+	/*
+	 * For boosted ontime task, don't let it drop to smaller capacity CPUs, 
+	 * specially during load balancing
+	 */
+	if (schedtune_task_boost(p) > 0 && smaller_cpu_capacity(dst_cpu, task_cpu(p)))
+		return false;
 
 	if (cpumask_test_cpu(dst_cpu, cpu_coregroup_mask(src_cpu))) {
 		trace_ems_ontime_check_migrate(p, dst_cpu, true, "go to same");
