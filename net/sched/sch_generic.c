@@ -320,7 +320,6 @@ static void dev_watchdog(unsigned long arg)
 				       round_jiffies(jiffies +
 						     dev->watchdog_timeo)))
 				dev_hold(dev);
-		}
 	}
 	netif_tx_unlock(dev);
 
