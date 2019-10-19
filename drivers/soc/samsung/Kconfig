@@ -168,7 +168,6 @@ config EXYNOS_PD
 		depends on PM
 		select PM_GENERIC_DOMAINS
 
-<<<<<<< HEAD
 config EXYNOS_SECURE_LOG
 	bool "Exynos Secure Log"
 	default y
