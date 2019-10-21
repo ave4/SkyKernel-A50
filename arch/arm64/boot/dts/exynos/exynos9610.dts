@@ -3409,7 +3409,7 @@
 			boost_table = < 0 >;
 			up_rate_limit_table = < 5 >;
 			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 80 >;
+			upscale_ratio_table = < 65 >;
 		};
 
 		domain@1 {
@@ -3419,7 +3419,7 @@
 			boost_table = < 0 >;
 			up_rate_limit_table = < 5 >;
 			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 80 >;
+			upscale_ratio_table = < 65 >;
 		};
 	};
 
