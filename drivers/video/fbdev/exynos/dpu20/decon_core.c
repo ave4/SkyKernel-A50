@@ -37,7 +37,10 @@
 #include <linux/memblock.h>
 #include <linux/bug.h>
 #include <linux/of_address.h>
-#include <linux/debugfs.h>
+#include <linux/debugfs.h>	
+#ifdef CONFIG_POWERSUSPEND
+#include <linux/powersuspend.h>
+#endif
 #include <linux/pinctrl/consumer.h>
 #include <video/mipi_display.h>
 #include <media/v4l2-subdev.h>
@@ -1040,6 +1043,9 @@ static int decon_blank(int blank_mode, struct fb_info *info)
 	case FB_BLANK_NORMAL:
 		DPU_EVENT_LOG(DPU_EVT_BLANK, &decon->sd, ktime_set(0, 0));
 		ret = decon_update_pwr_state(decon, DISP_PWR_OFF);
+#ifdef CONFIG_POWERSUSPEND
+ 		set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
+#endif		
 		if (ret) {
 			decon_err("failed to disable decon\n");
 			goto blank_exit;
@@ -1050,6 +1056,9 @@ static int decon_blank(int blank_mode, struct fb_info *info)
 	case FB_BLANK_UNBLANK:
 		DPU_EVENT_LOG(DPU_EVT_UNBLANK, &decon->sd, ktime_set(0, 0));
 		ret = decon_update_pwr_state(decon, DISP_PWR_NORMAL);
+#ifdef CONFIG_POWERSUSPEND
+ 		set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
+#endif			
 		if (ret) {
 			decon_err("failed to enable decon\n");
 			goto blank_exit;
